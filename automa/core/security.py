@@ -12,16 +12,32 @@ from ..domain.models import User
 from ..api.deps import get_db
 
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+_pwd_context: CryptContext | None = None
+
+
+def _build_pwd_context() -> CryptContext:
+    # Try bcrypt first; fall back to pbkdf2_sha256 if unavailable
+    try:
+        import bcrypt  # noqa: F401
+        return CryptContext(schemes=["bcrypt"], deprecated="auto")
+    except Exception:
+        return CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
+
+
+def get_pwd_context() -> CryptContext:
+    global _pwd_context
+    if _pwd_context is None:
+        _pwd_context = _build_pwd_context()
+    return _pwd_context
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/token")
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
+    return get_pwd_context().verify(plain_password, hashed_password)
 
 
 def get_password_hash(password: str) -> str:
-    return pwd_context.hash(password)
+    return get_pwd_context().hash(password)
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
@@ -58,4 +74,3 @@ async def get_current_user(token: str = Depends(oauth2_scheme), session: Session
     if user is None or not user.is_active:
         raise credentials_exception
     return user
-

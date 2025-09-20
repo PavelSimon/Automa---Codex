@@ -1,6 +1,9 @@
-{% if user %}
-  <span class="ok">Prihlásený: {{ user.email }}{% if user.is_admin %} (admin){% endif %}</span>
-  <button hx-post="/ui/auth/logout" hx-target="#login-status" hx-swap="outerHTML">Odhlásiť</button>
-{% else %}
-  <span class="warn">Neprihlásený</span>
-{% endif %}
+<div id="login-status">
+  {% if user %}
+    <span class="ok">Prihlásený: {{ user.email }}{% if user.is_admin %} (admin){% endif %}</span>
+    <button hx-post="/ui/auth/logout" hx-target="#login-status" hx-swap="outerHTML">Odhlásiť</button>
+  {% else %}
+    <span class="warn">Neprihlásený</span>
+  {% endif %}
+</div>
+

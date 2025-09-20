@@ -45,6 +45,7 @@ Funkcie UI:
 3) Správa: `/api/v1/agents`, `/api/v1/scripts`, `/api/v1/jobs`
 4) Registrácia: `POST /api/v1/auth/register`
 5) Profil: `GET/PATCH /api/v1/users/me`, `POST /api/v1/users/me/change_password`
+6) Joby vracajú stav exekúcie (`status`, `last_run_at`, `last_exit_code`, `last_error`).
 
 ## Migrácie (Alembic)
 - Upgrade: `uv run alembic upgrade head`

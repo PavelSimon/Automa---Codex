@@ -1,23 +1,25 @@
+<div id="profile">
 {% if user %}
   <form hx-post="/ui/profile" hx-target="#profile" hx-swap="outerHTML">
     <div>
-      <label>Email <input type="email" name="email" value="{{ user.email }}" required /></label>
+      <label>Email <input type="email" name="email" value="{{ user.email }}" autocomplete="email" required /></label>
     </div>
     <div>
-      <label>Meno <input type="text" name="full_name" value="{{ user.full_name or '' }}" /></label>
+      <label>Meno <input type="text" name="full_name" value="{{ user.full_name or '' }}" autocomplete="name" /></label>
     </div>
     <button type="submit">Uložiť profil</button>
   </form>
   <form hx-post="/ui/profile/change_password" hx-target="#profile" hx-swap="none" style="margin-top:10px;">
     <div>
-      <label>Aktuálne heslo <input type="password" name="old_password" required /></label>
+      <label>Aktuálne heslo <input type="password" name="old_password" autocomplete="current-password" required /></label>
     </div>
     <div>
-      <label>Nové heslo <input type="password" name="new_password" required /></label>
+      <label>Nové heslo <input type="password" name="new_password" autocomplete="new-password" required /></label>
     </div>
     <button type="submit">Zmeniť heslo</button>
   </form>
 {% else %}
   <div class="warn">Neprihlásený</div>
 {% endif %}
+</div>
 

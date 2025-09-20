@@ -2,11 +2,11 @@ from datetime import datetime
 from typing import Optional
 
 from fastapi import APIRouter, Depends, Form, Request, Response, HTTPException
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sqlmodel import Session, select
 
-from ...api.deps import get_db
+from ..deps import get_db
 from ...core.security import authenticate_user, create_access_token
 from ...domain.models import Agent, Script, Job, User
 from ...scheduler.manager import scheduler_add_once
@@ -20,7 +20,6 @@ def _get_user_from_cookie(request: Request, session: Session) -> Optional[User]:
     token = request.cookies.get("automa_access_token")
     if not token:
         return None
-    # Lazy import to reuse logic
     from jose import JWTError, jwt
     from ...core.config import settings
     try:
@@ -43,18 +42,20 @@ def ui_login(
 ):
     user = authenticate_user(session, email, password)
     if not user:
-        # Return small snippet with error
-        return HTMLResponse("<span class='err'>Nesprávne prihlasovacie údaje</span>", status_code=401)
+        return HTMLResponse("<span class='err'>Invalid credentials</span>", status_code=401)
     token = create_access_token({"sub": user.email})
-    # Cookie for UI requests
-    response.set_cookie("automa_access_token", token, httponly=True, samesite="lax")
-    return templates.TemplateResponse("partials/login_status.html", {"request": request, "user": user})
+    resp = templates.TemplateResponse("partials/login_status.html", {"request": request, "user": user})
+    resp.set_cookie("automa_access_token", token, httponly=True, samesite="lax")
+    resp.headers["HX-Refresh"] = "true"
+    return resp
 
 
 @router.post("/auth/logout", response_class=HTMLResponse)
 def ui_logout(request: Request, response: Response):
-    response.delete_cookie("automa_access_token")
-    return HTMLResponse("<span>Odhlásený</span>")
+    resp = HTMLResponse("<span>Logged out</span>")
+    resp.delete_cookie("automa_access_token")
+    resp.headers["HX-Refresh"] = "true"
+    return resp
 
 
 @router.post("/auth/register", response_class=HTMLResponse)
@@ -66,19 +67,17 @@ def ui_register(
     full_name: str | None = Form(None),
     session: Session = Depends(get_db),
 ):
-    from sqlmodel import select
     from ...core.security import get_password_hash
-    from ...core.config import settings
-    from ...core.security import create_access_token
-
     if session.exec(select(User).where(User.email == email)).first():
-        return HTMLResponse("<span class='err'>Email je už zaregistrovaný</span>", status_code=400)
+        return HTMLResponse("<span class='err'>Email already registered</span>", status_code=400)
     user = User(email=email, hashed_password=get_password_hash(password), full_name=full_name, is_active=True)
     session.add(user)
     session.commit()
     token = create_access_token({"sub": user.email})
-    response.set_cookie("automa_access_token", token, httponly=True, samesite="lax")
-    return templates.TemplateResponse("partials/login_status.html", {"request": request, "user": user})
+    resp = templates.TemplateResponse("partials/login_status.html", {"request": request, "user": user})
+    resp.set_cookie("automa_access_token", token, httponly=True, samesite="lax")
+    resp.headers["HX-Refresh"] = "true"
+    return resp
 
 
 @router.get("/partials/login_status", response_class=HTMLResponse)
@@ -150,14 +149,18 @@ def partial_profile(request: Request, session: Session = Depends(get_db)):
 
 
 @router.post("/profile", response_class=HTMLResponse)
-def update_profile(request: Request, session: Session = Depends(get_db), email: str | None = Form(None), full_name: str | None = Form(None)):
+def update_profile(
+    request: Request,
+    session: Session = Depends(get_db),
+    email: str | None = Form(None),
+    full_name: str | None = Form(None),
+):
     user = _get_user_from_cookie(request, session)
     if not user:
         raise HTTPException(status_code=401, detail="Unauthorized")
-    from sqlmodel import select
     if email and email != user.email:
         if session.exec(select(User).where(User.email == email)).first():
-            return HTMLResponse("<span class='err'>Email už používa iný účet</span>", status_code=400)
+            return HTMLResponse("<span class='err'>Email already in use</span>", status_code=400)
         user.email = email
     if full_name is not None:
         user.full_name = full_name
@@ -167,17 +170,22 @@ def update_profile(request: Request, session: Session = Depends(get_db), email: 
 
 
 @router.post("/profile/change_password", response_class=HTMLResponse)
-def update_password(request: Request, session: Session = Depends(get_db), old_password: str = Form(...), new_password: str = Form(...)):
+def update_password(
+    request: Request,
+    session: Session = Depends(get_db),
+    old_password: str = Form(...),
+    new_password: str = Form(...),
+):
     user = _get_user_from_cookie(request, session)
     if not user:
         raise HTTPException(status_code=401, detail="Unauthorized")
     from ...core.security import verify_password, get_password_hash
     if not verify_password(old_password, user.hashed_password):
-        return HTMLResponse("<span class='err'>Nesprávne aktuálne heslo</span>", status_code=400)
+        return HTMLResponse("<span class='err'>Invalid current password</span>", status_code=400)
     user.hashed_password = get_password_hash(new_password)
     session.add(user)
     session.commit()
-    return HTMLResponse("<span class='ok'>Heslo zmenené</span>")
+    return HTMLResponse("<span class='ok'>Password changed</span>")
 
 
 @router.post("/jobs", response_class=HTMLResponse)
@@ -193,7 +201,6 @@ def create_job_ui(
     job = Job(script_id=script_id, status="scheduled")
     session.add(job)
     session.commit()
-    # schedule
     dt = None
     if when:
         try:

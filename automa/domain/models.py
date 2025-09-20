@@ -34,6 +34,8 @@ class Job(SQLModel, table=True):
     schedule: Optional[str] = None  # e.g., cron string
     status: str = Field(default="pending")
     last_run_at: Optional[datetime] = None
+    last_exit_code: Optional[int] = None
+    last_error: Optional[str] = None
 
 
 class AuditLog(SQLModel, table=True):

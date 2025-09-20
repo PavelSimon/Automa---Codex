@@ -1,8 +1,10 @@
-<ul>
-  {% for s in scripts %}
-    <li>{{ s.id }} • {{ s.name }} — {{ s.path }}</li>
-  {% else %}
-    <li class="warn">Žiadne skripty</li>
-  {% endfor %}
-</ul>
+<div id="scripts-list">
+  <ul>
+    {% for s in scripts %}
+      <li>{{ s.id }} — {{ s.name }} — {{ s.path }}</li>
+    {% else %}
+      <li class="warn">Žiadne skripty</li>
+    {% endfor %}
+  </ul>
+</div>
 

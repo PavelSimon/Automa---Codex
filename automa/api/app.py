@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
@@ -28,9 +29,18 @@ app.add_middleware(
 @app.on_event("startup")
 def on_startup() -> None:
     init_db()
-    with get_session() as s:
-        ensure_bootstrap_admin(s)
-    scheduler_start()
+    # Optional bootstrap and scheduler can be disabled via env for debugging on Windows
+    try:
+        if os.getenv("AUTOMA_DISABLE_BOOTSTRAP", "0") != "1":
+            with get_session() as s:
+                ensure_bootstrap_admin(s)
+    except Exception as e:
+        # Surface startup errors early
+        import traceback
+        traceback.print_exc()
+        raise
+    if os.getenv("AUTOMA_DISABLE_SCHED", "0") != "1":
+        scheduler_start()
 
 
 @app.on_event("shutdown")

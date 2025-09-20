@@ -1,10 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlmodel import Session
+from pydantic import BaseModel
+from sqlmodel import Session, select
 
-from ...core.security import get_current_user
+from ..deps import get_db
+from ...core.security import (
+    get_current_user,
+    verify_password,
+    get_password_hash,
+)
 from ...domain.models import User
-from pydantic import BaseModel, EmailStr
-from sqlmodel import select
 
 
 router = APIRouter(prefix="/api/v1/users", tags=["users"])
@@ -16,12 +20,16 @@ def read_me(current_user: User = Depends(get_current_user)):
 
 
 class UserUpdate(BaseModel):
-    email: EmailStr | None = None
+    email: str | None = None
     full_name: str | None = None
 
 
 @router.patch("/me")
-def update_me(payload: UserUpdate, session: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+def update_me(
+    payload: UserUpdate,
+    session: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
     if payload.email and payload.email != current_user.email:
         if session.exec(select(User).where(User.email == payload.email)).first():
             raise HTTPException(status_code=400, detail="Email already in use")
@@ -39,12 +47,12 @@ class PasswordChange(BaseModel):
     new_password: str
 
 
-from ...core.security import verify_password, get_password_hash
-from ..deps import get_db
-
-
 @router.post("/me/change_password")
-def change_password(payload: PasswordChange, session: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+def change_password(
+    payload: PasswordChange,
+    session: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
     if not verify_password(payload.old_password, current_user.hashed_password):
         raise HTTPException(status_code=400, detail="Invalid current password")
     current_user.hashed_password = get_password_hash(payload.new_password)
