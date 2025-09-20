@@ -1,0 +1,19 @@
+[project]
+name = "automa"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.24",
+    "sqlmodel>=0.0.16",
+    "SQLAlchemy>=2.0",
+    "apscheduler>=3.10",
+    "python-jose[cryptography]>=3.3.0",
+    "passlib[bcrypt]>=1.7.4",
+    "pydantic>=2.5",
+    "pydantic-settings>=2.2",
+    "python-multipart>=0.0.9",
+    "pytest>=7.4",
+]

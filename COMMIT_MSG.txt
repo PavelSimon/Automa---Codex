@@ -1,0 +1,13 @@
+feat: scaffold FastAPI MVP backend
+
+FastAPI app, routers (auth, users, agents, scripts, jobs)
+SQLModel models, SQLite, JWT auth, APScheduler stub
+Sandbox runner stub and admin bootstrap
+
+test: add pytest tests and smoke script
+
+tests for health, auth, agents; scripts/smoke_test.py
+
+docs: update AGENTS.md and POSTUP.md with testing instructions
+
+chore: set Python 3.13 and add deps in pyproject.toml
