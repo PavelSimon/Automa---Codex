@@ -1,0 +1,4 @@
+docs: switch workflow to uv (no pip/python)
+
+- Update AGENTS.md and POSTUP.md to use `uv sync` and `uv run`
+- Add README.md usage with uv (pin 3.13, run, test)

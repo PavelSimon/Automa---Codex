@@ -6,12 +6,13 @@
  - `README.md`: Short project overview and usage notes.
  - Optional as the code grows: place modules under `automa/` and tests under `tests/`.
 
-## Build, Test, and Development Commands
-- Run app: `python main.py`
-- Lint (optional): `ruff .` — static analysis if Ruff is installed.
-- Format (optional): `black .` — auto-format if Black is installed.
-- Tests (when added): `pytest -q` — run unit tests in `tests/`.
- - Migrations: `alembic upgrade head`; create new: `alembic revision --autogenerate -m "msg"`.
+ ## Build, Test, and Development Commands (uv)
+ - Install deps: `uv sync` (respects `pyproject.toml`).
+ - Pin Python: `uv python pin 3.13` (one-time, if needed).
+ - Run app: `uv run uvicorn automa.api.app:app --reload`.
+ - Tests: `uv run pytest -q` — unit tests in `tests/`.
+ - Migrations: `uv run alembic upgrade head`; new: `uv run alembic revision --autogenerate -m "msg"`.
+ - Lint/Format (optional): `uv run ruff .`, `uv run black .` if tools are added.
 
  ## Coding Style & Naming Conventions
  - Indentation: 4 spaces; line length ≤ 100 chars.

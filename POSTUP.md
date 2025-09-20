@@ -41,15 +41,16 @@ tests/
 - Pluginy: definovať rozhranie (Protocol/ABC) a naming `plugins.<názov>.plugin`.
 - API: verzovanie `/api/v1`, OpenAPI schema, token-permissions.
 
-## 6) Lokálne spustenie a príkazy
-- Python 3.13: vytvoriť venv, nainštalovať závislosti (FastAPI, Uvicorn, SQLModel/SQLAlchemy, APScheduler, python-jose, passlib, Alembic).
-- Spustenie API: `uvicorn automa.api.app:app --reload`.
-- Testy: `pytest -q` (umiestniť do `tests/`, `test_*.py`).
+## 6) Lokálne spustenie a príkazy (uv)
+- Požadovaná verzia: Python 3.13 (`uv python pin 3.13`).
+- Inštalácia závislostí: `uv sync` (čerpá z `pyproject.toml`).
+- Spustenie API: `uv run uvicorn automa.api.app:app --reload`.
+- Testy: `uv run pytest -q` (umiestniť do `tests/`, `test_*.py`).
 
 ## 6b) Testovanie (MVP)
 - Pridané testy: `tests/test_health.py`, `tests/test_auth_and_agents.py`.
 - Pokrytie: základné overenie health checku, získania JWT tokenu a CRUD nad agentmi.
-- Spustenie: `pytest -q` v aktívnom virtuálnom prostredí.
+- Spustenie: `uv run pytest -q`.
 
 ## 7) Nasadenie
 - Lokálne/LAN: Uvicorn/Gunicorn + reverse proxy (Nginx/Caddy), perzistentná DB, Docker daemon.
@@ -58,5 +59,5 @@ tests/
 ## 8) Migrácie schémy (Alembic)
 - Konfigurácia: `alembic.ini`, priečinok `alembic/` (baseline rev `0001_baseline`).
 - Prvé spustenie: tabuľky vytvorí aplikácia (SQLModel). Alembic baseline len označí stav.
-- Budúce zmeny: po úprave modelov spustiť `alembic revision --autogenerate -m "<popis>"` a `alembic upgrade head`.
+- Budúce zmeny: po úprave modelov spustiť `uv run alembic revision --autogenerate -m "<popis>"` a `uv run alembic upgrade head`.
 - URL DB sa berie z `AUTOMA_SQLITE_URL` alebo default `sqlite:///./automa.db`.
