@@ -44,7 +44,7 @@ tests/
 ## 6) Lokálne spustenie a príkazy (uv)
 - Požadovaná verzia: Python 3.13 (`uv python pin 3.13`).
 - Inštalácia závislostí: `uv sync` (čerpá z `pyproject.toml`).
-- Spustenie API: `uv run uvicorn automa.api.app:app --reload`.
+- Spustenie API: `uv run uvicorn automa.api.app:app --reload --port 7999`.
 - Testy: `uv run pytest -q` (umiestniť do `tests/`, `test_*.py`).
 
 ## 6b) Testovanie (MVP)

@@ -9,7 +9,7 @@
  ## Build, Test, and Development Commands (uv)
  - Install deps: `uv sync` (respects `pyproject.toml`).
  - Pin Python: `uv python pin 3.13` (one-time, if needed).
- - Run app: `uv run uvicorn automa.api.app:app --reload`.
+ - Run app: `uv run uvicorn automa.api.app:app --reload --port 7999`.
  - Tests: `uv run pytest -q` — unit tests in `tests/`.
  - Migrations: `uv run alembic upgrade head`; new: `uv run alembic revision --autogenerate -m "msg"`.
  - Lint/Format (optional): `uv run ruff .`, `uv run black .` if tools are added.

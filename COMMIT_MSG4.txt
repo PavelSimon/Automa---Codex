@@ -1,0 +1,3 @@
+docs: set default run port to 7999 in docs
+
+Update AGENTS.md, POSTUP.md, README.md to include `--port 7999` and health URL.
