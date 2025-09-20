@@ -47,6 +47,7 @@ def ui_login(
     resp = templates.TemplateResponse("partials/login_status.html", {"request": request, "user": user})
     resp.set_cookie("automa_access_token", token, httponly=True, samesite="lax")
     resp.headers["HX-Refresh"] = "true"
+    resp.headers["HX-Redirect"] = "/"
     return resp
 
 
@@ -55,6 +56,7 @@ def ui_logout(request: Request, response: Response):
     resp = HTMLResponse("<span>Logged out</span>")
     resp.delete_cookie("automa_access_token")
     resp.headers["HX-Refresh"] = "true"
+    resp.headers["HX-Redirect"] = "/"
     return resp
 
 
@@ -77,6 +79,7 @@ def ui_register(
     resp = templates.TemplateResponse("partials/login_status.html", {"request": request, "user": user})
     resp.set_cookie("automa_access_token", token, httponly=True, samesite="lax")
     resp.headers["HX-Refresh"] = "true"
+    resp.headers["HX-Redirect"] = "/"
     return resp
 
 
