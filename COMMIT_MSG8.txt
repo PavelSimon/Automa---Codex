@@ -1,0 +1,5 @@
+feat(ui): add HTMX-based frontend with Jinja templates
+
+- Templates under automa/web/templates
+- UI routes under /ui for login and CRUD returning partials
+- Root renders index.html via Jinja2Templates

@@ -1,0 +1,8 @@
+<ul>
+  {% for j in jobs %}
+    <li>{{ j.id }} • status={{ j.status }}{% if j.last_run_at %} • last={{ j.last_run_at }}{% endif %}</li>
+  {% else %}
+    <li class="warn">Žiadne joby</li>
+  {% endfor %}
+</ul>
+

@@ -1,6 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
+from fastapi.templating import Jinja2Templates
 from starlette.staticfiles import StaticFiles
 
 from ..core.config import settings
@@ -8,10 +9,11 @@ from ..core.db import init_db, get_session
 from ..domain.repo import ensure_bootstrap_admin
 from ..scheduler.manager import scheduler_start, scheduler_shutdown
 
-from .routes import health, auth, users, agents, scripts, jobs
+from .routes import health, auth, users, agents, scripts, jobs, ui
 
 
 app = FastAPI(title=settings.app_name)
+templates = Jinja2Templates(directory="automa/web/templates")
 
 app.add_middleware(
     CORSMiddleware,
@@ -36,13 +38,8 @@ def on_shutdown() -> None:
 
 
 @app.get("/")
-def root():
-    """Serve frontend index if present; else JSON status."""
-    import os
-    index_path = os.path.join("automa", "web", "static", "index.html")
-    if os.path.exists(index_path):
-        return FileResponse(index_path)
-    return {"app": settings.app_name, "status": "ok"}
+def root(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request, "app_name": settings.app_name})
 
 
 # Static files and favicon
@@ -71,3 +68,4 @@ app.include_router(users.router)
 app.include_router(agents.router)
 app.include_router(scripts.router)
 app.include_router(jobs.router)
+app.include_router(ui.router)

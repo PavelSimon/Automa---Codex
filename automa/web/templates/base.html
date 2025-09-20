@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="sk">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ title if title else 'Automa' }}</title>
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="stylesheet" href="/static/style.css" />
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+  </head>
+  <body>
+    <header>
+      <h1>{{ title if title else 'Automa — Dashboard' }}</h1>
+      <div id="health" class="pill"
+           hx-get="/api/v1/health"
+           hx-trigger="load"
+           hx-swap="outerHTML">
+        checking…
+      </div>
+    </header>
+
+    {% block content %}{% endblock %}
+
+    <footer>
+      <small>Beží na porte 7999 • <code>/api/v1/*</code></small>
+    </footer>
+  </body>
+  </html>
+

@@ -1,0 +1,6 @@
+{% if user %}
+  <span class="ok">Prihlásený: {{ user.email }}{% if user.is_admin %} (admin){% endif %}</span>
+{% else %}
+  <span class="warn">Neprihlásený</span>
+{% endif %}
+

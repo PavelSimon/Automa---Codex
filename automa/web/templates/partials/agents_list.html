@@ -1,0 +1,8 @@
+<ul>
+  {% for a in agents %}
+    <li>{{ a.id }} • {{ a.name }} — {{ a.description or '' }}</li>
+  {% else %}
+    <li class="warn">Žiadni agenti</li>
+  {% endfor %}
+</ul>
+

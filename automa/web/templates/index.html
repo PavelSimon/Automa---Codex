@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+<section>
+  <h2>Prihlásenie</h2>
+  <form hx-post="/ui/auth/login" hx-target="#login-status" hx-swap="outerHTML">
+    <label>Email <input type="email" name="email" value="admin@example.com" required /></label>
+    <label>Heslo <input type="password" name="password" value="admin" required /></label>
+    <button type="submit">Prihlásiť</button>
+    <span id="login-status" hx-get="/ui/partials/login_status" hx-trigger="load" hx-swap="outerHTML">&nbsp;</span>
+  </form>
+</section>
+
+<section>
+  <h2>Agenti</h2>
+  <form hx-post="/ui/agents" hx-target="#agents-list" hx-swap="outerHTML">
+    <input type="text" name="name" placeholder="názov agenta" required />
+    <input type="text" name="description" placeholder="popis" />
+    <button type="submit">Vytvoriť</button>
+  </form>
+  <div id="agents-list" hx-get="/ui/partials/agents" hx-trigger="load" hx-swap="outerHTML">Načítavam…</div>
+  </section>
+
+<section>
+  <h2>Skripty</h2>
+  <form hx-post="/ui/scripts" hx-target="#scripts-list" hx-swap="outerHTML">
+    <input type="text" name="name" placeholder="názov skriptu" required />
+    <input type="text" name="path" placeholder="cesta k skriptu" required />
+    <input type="text" name="description" placeholder="popis" />
+    <button type="submit">Vytvoriť</button>
+  </form>
+  <div id="scripts-list" hx-get="/ui/partials/scripts" hx-trigger="load" hx-swap="outerHTML">Načítavam…</div>
+</section>
+
+<section>
+  <h2>Joby</h2>
+  <form hx-post="/ui/jobs" hx-target="#jobs-list" hx-swap="outerHTML">
+    <input type="number" name="script_id" placeholder="script_id (voliteľné)" />
+    <input type="datetime-local" name="when" />
+    <button type="submit">Naplánovať</button>
+  </form>
+  <div id="jobs-list" hx-get="/ui/partials/jobs" hx-trigger="load" hx-swap="outerHTML">Načítavam…</div>
+</section>
+{% endblock %}
+
