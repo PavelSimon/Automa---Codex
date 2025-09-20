@@ -8,3 +8,24 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Local DB and commit messages (do not commit)
+automa.db
+COMMIT_MSG*.txt
+
+# Common local artifacts
+*.db
+*.sqlite
+*.sqlite3
+*.log
+logs/
+.env
+.env.*
+.DS_Store
+Thumbs.db
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.mypy_cache/
+.ruff_cache/
