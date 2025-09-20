@@ -1,0 +1,5 @@
+docs: expand README (overview, run, tests, config, migrations)
+
+- Add app description, structure, backend/frontend run with uv
+- Add tests section and quick API start
+- Add env config and Alembic usage
