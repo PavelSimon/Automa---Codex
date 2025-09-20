@@ -1,5 +1,0 @@
-feat: serve favicon and static files
-
-- Mount /static (skip dir check) and add /favicon.ico route
-- Prefer automa/web/static/favicon.ico; fallback to repo root favicon.ico
-- Add static directory placeholder

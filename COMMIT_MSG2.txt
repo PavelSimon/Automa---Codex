@@ -1,9 +1,0 @@
-test: add jobs endpoint tests and smoke
-
-- tests/test_jobs.py for create/list jobs
-- extend scripts/smoke_test.py to cover jobs
-
-chore: add Alembic scaffolding
-
-- alembic.ini, env.py, baseline revision
-- update docs (POSTUP.md, AGENTS.md) and deps (alembic)
