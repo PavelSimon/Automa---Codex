@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="sk">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Automa Dashboard</title>
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Automa — Dashboard</h1>
+      <div id="health" class="pill">checking…</div>
+    </header>
+
+    <section id="auth">
+      <h2>Prihlásenie</h2>
+      <form id="login-form">
+        <label>Email <input type="email" name="username" value="admin@example.com" required /></label>
+        <label>Heslo <input type="password" name="password" value="admin" required /></label>
+        <button type="submit">Prihlásiť</button>
+        <span id="login-status"></span>
+      </form>
+      <div id="me" class="hide"></div>
+    </section>
+
+    <section>
+      <h2>Agenti</h2>
+      <form id="agent-form">
+        <input type="text" name="name" placeholder="názov agenta" required />
+        <input type="text" name="description" placeholder="popis" />
+        <button type="submit">Vytvoriť</button>
+      </form>
+      <ul id="agents"></ul>
+    </section>
+
+    <section>
+      <h2>Skripty</h2>
+      <form id="script-form">
+        <input type="text" name="name" placeholder="názov skriptu" required />
+        <input type="text" name="path" placeholder="cesta k skriptu" required />
+        <input type="text" name="description" placeholder="popis" />
+        <button type="submit">Vytvoriť</button>
+      </form>
+      <ul id="scripts"></ul>
+    </section>
+
+    <section>
+      <h2>Joby</h2>
+      <form id="job-form">
+        <input type="number" name="script_id" placeholder="script_id (voliteľné)" />
+        <input type="datetime-local" name="when" />
+        <button type="submit">Naplánovať</button>
+      </form>
+      <ul id="jobs"></ul>
+    </section>
+
+    <footer>
+      <small>Beží na porte 7999 • <code>/api/v1/*</code></small>
+    </footer>
+
+    <script src="/static/app.js"></script>
+  </body>
+  </html>
+

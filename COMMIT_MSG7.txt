@@ -1,0 +1,5 @@
+feat(web): add minimal dashboard UI (HTML/CSS/JS)
+
+- Serve index.html at root when present
+- Forms for auth, agents, scripts, jobs using /api/v1/*
+- Static assets under automa/web/static

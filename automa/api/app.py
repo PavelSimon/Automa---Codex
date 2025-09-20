@@ -37,6 +37,11 @@ def on_shutdown() -> None:
 
 @app.get("/")
 def root():
+    """Serve frontend index if present; else JSON status."""
+    import os
+    index_path = os.path.join("automa", "web", "static", "index.html")
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
     return {"app": settings.app_name, "status": "ok"}
 
 
