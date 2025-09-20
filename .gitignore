@@ -11,7 +11,7 @@ wheels/
 
 # Local DB and commit messages (do not commit)
 automa.db
-COMMIT_MSG*.txt
+*COMMIT_MSG*.txt
 
 # Common local artifacts
 *.db
