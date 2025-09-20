@@ -16,4 +16,4 @@ li { padding:10px; border:1px solid #334155; border-radius:8px; background:#0b12
 .err { color: var(--err); }
 .hide { display: none; }
 footer { padding: 16px 20px; color: var(--muted); }
-
+.grid2 { display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; align-items:start; }

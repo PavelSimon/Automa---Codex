@@ -57,6 +57,30 @@ def ui_logout(request: Request, response: Response):
     return HTMLResponse("<span>Odhlásený</span>")
 
 
+@router.post("/auth/register", response_class=HTMLResponse)
+def ui_register(
+    request: Request,
+    response: Response,
+    email: str = Form(...),
+    password: str = Form(...),
+    full_name: str | None = Form(None),
+    session: Session = Depends(get_db),
+):
+    from sqlmodel import select
+    from ...core.security import get_password_hash
+    from ...core.config import settings
+    from ...core.security import create_access_token
+
+    if session.exec(select(User).where(User.email == email)).first():
+        return HTMLResponse("<span class='err'>Email je už zaregistrovaný</span>", status_code=400)
+    user = User(email=email, hashed_password=get_password_hash(password), full_name=full_name, is_active=True)
+    session.add(user)
+    session.commit()
+    token = create_access_token({"sub": user.email})
+    response.set_cookie("automa_access_token", token, httponly=True, samesite="lax")
+    return templates.TemplateResponse("partials/login_status.html", {"request": request, "user": user})
+
+
 @router.get("/partials/login_status", response_class=HTMLResponse)
 def login_status(request: Request, session: Session = Depends(get_db)):
     user = _get_user_from_cookie(request, session)
@@ -65,7 +89,8 @@ def login_status(request: Request, session: Session = Depends(get_db)):
 
 @router.get("/partials/agents", response_class=HTMLResponse)
 def partial_agents(request: Request, session: Session = Depends(get_db)):
-    agents = session.exec(select(Agent)).all()
+    user = _get_user_from_cookie(request, session)
+    agents = session.exec(select(Agent)).all() if user else []
     return templates.TemplateResponse("partials/agents_list.html", {"request": request, "agents": agents})
 
 
@@ -88,7 +113,8 @@ def create_agent_ui(
 
 @router.get("/partials/scripts", response_class=HTMLResponse)
 def partial_scripts(request: Request, session: Session = Depends(get_db)):
-    scripts = session.exec(select(Script)).all()
+    user = _get_user_from_cookie(request, session)
+    scripts = session.exec(select(Script)).all() if user else []
     return templates.TemplateResponse("partials/scripts_list.html", {"request": request, "scripts": scripts})
 
 
@@ -112,8 +138,46 @@ def create_script_ui(
 
 @router.get("/partials/jobs", response_class=HTMLResponse)
 def partial_jobs(request: Request, session: Session = Depends(get_db)):
-    jobs = session.exec(select(Job)).all()
+    user = _get_user_from_cookie(request, session)
+    jobs = session.exec(select(Job)).all() if user else []
     return templates.TemplateResponse("partials/jobs_list.html", {"request": request, "jobs": jobs})
+
+
+@router.get("/partials/profile", response_class=HTMLResponse)
+def partial_profile(request: Request, session: Session = Depends(get_db)):
+    user = _get_user_from_cookie(request, session)
+    return templates.TemplateResponse("partials/profile.html", {"request": request, "user": user})
+
+
+@router.post("/profile", response_class=HTMLResponse)
+def update_profile(request: Request, session: Session = Depends(get_db), email: str | None = Form(None), full_name: str | None = Form(None)):
+    user = _get_user_from_cookie(request, session)
+    if not user:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    from sqlmodel import select
+    if email and email != user.email:
+        if session.exec(select(User).where(User.email == email)).first():
+            return HTMLResponse("<span class='err'>Email už používa iný účet</span>", status_code=400)
+        user.email = email
+    if full_name is not None:
+        user.full_name = full_name
+    session.add(user)
+    session.commit()
+    return templates.TemplateResponse("partials/profile.html", {"request": request, "user": user})
+
+
+@router.post("/profile/change_password", response_class=HTMLResponse)
+def update_password(request: Request, session: Session = Depends(get_db), old_password: str = Form(...), new_password: str = Form(...)):
+    user = _get_user_from_cookie(request, session)
+    if not user:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    from ...core.security import verify_password, get_password_hash
+    if not verify_password(old_password, user.hashed_password):
+        return HTMLResponse("<span class='err'>Nesprávne aktuálne heslo</span>", status_code=400)
+    user.hashed_password = get_password_hash(new_password)
+    session.add(user)
+    session.commit()
+    return HTMLResponse("<span class='ok'>Heslo zmenené</span>")
 
 
 @router.post("/jobs", response_class=HTMLResponse)
@@ -140,4 +204,3 @@ def create_job_ui(
 
     jobs = session.exec(select(Job)).all()
     return templates.TemplateResponse("partials/jobs_list.html", {"request": request, "jobs": jobs})
-

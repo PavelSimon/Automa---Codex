@@ -1,13 +1,27 @@
 {% extends 'base.html' %}
 {% block content %}
 <section>
-  <h2>Prihlásenie</h2>
-  <form hx-post="/ui/auth/login" hx-target="#login-status" hx-swap="outerHTML">
-    <label>Email <input type="email" name="email" value="admin@example.com" required /></label>
-    <label>Heslo <input type="password" name="password" value="admin" required /></label>
-    <button type="submit">Prihlásiť</button>
-    <span id="login-status" hx-get="/ui/partials/login_status" hx-trigger="load" hx-swap="outerHTML">&nbsp;</span>
-  </form>
+  <h2>Prihlásenie / Registrácia</h2>
+  <div class="grid2">
+    <form hx-post="/ui/auth/login" hx-target="#login-status" hx-swap="outerHTML">
+      <label>Email <input type="email" name="email" value="admin@example.com" required /></label>
+      <label>Heslo <input type="password" name="password" value="admin" required /></label>
+      <button type="submit">Prihlásiť</button>
+      <span id="login-status" hx-get="/ui/partials/login_status" hx-trigger="load" hx-swap="outerHTML">&nbsp;</span>
+    </form>
+    <form hx-post="/ui/auth/register" hx-target="#login-status" hx-swap="outerHTML">
+      <label>Email <input type="email" name="email" placeholder="novy@example.com" required /></label>
+      <label>Meno <input type="text" name="full_name" placeholder="Celé meno" /></label>
+      <label>Heslo <input type="password" name="password" required /></label>
+      <button type="submit">Registrovať</button>
+    </form>
+  </div>
+</section>
+
+{% if user %}
+<section>
+  <h2>Profil</h2>
+  <div id="profile" hx-get="/ui/partials/profile" hx-trigger="load" hx-swap="outerHTML">Načítavam…</div>
 </section>
 
 <section>
@@ -40,5 +54,11 @@
   </form>
   <div id="jobs-list" hx-get="/ui/partials/jobs" hx-trigger="load" hx-swap="outerHTML">Načítavam…</div>
 </section>
+{% else %}
+<section>
+  <div class="warn">Obsah je dostupný až po prihlásení.</div>
+  <div>Prihlás sa v sekcii vyššie.</div>
+  </section>
+{% endif %}
 {% endblock %}
 

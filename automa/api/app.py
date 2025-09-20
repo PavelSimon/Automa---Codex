@@ -10,6 +10,7 @@ from ..domain.repo import ensure_bootstrap_admin
 from ..scheduler.manager import scheduler_start, scheduler_shutdown
 
 from .routes import health, auth, users, agents, scripts, jobs, ui
+from .routes.ui import _get_user_from_cookie
 
 
 app = FastAPI(title=settings.app_name)
@@ -39,7 +40,9 @@ def on_shutdown() -> None:
 
 @app.get("/")
 def root(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request, "app_name": settings.app_name})
+    with get_session() as s:
+        user = _get_user_from_cookie(request, s)
+    return templates.TemplateResponse("index.html", {"request": request, "app_name": settings.app_name, "user": user})
 
 
 # Static files and favicon

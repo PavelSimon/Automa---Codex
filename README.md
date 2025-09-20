@@ -18,8 +18,15 @@ Automa je FastAPI backend pre riadenie, plánovanie, monitoring a audit Python s
 - Health: `http://localhost:7999/api/v1/health` → `{ "status": "ok" }`
 
 ## Frontend
-- Statika je servovaná z `automa/web/static` na ceste `/static` a favicon cez `/favicon.ico`.
-- Jednoduchý dashboard je voliteľný; pridajte HTML/JS/CSS do `automa/web/static/`.
+- Predvolene HTMX + Jinja šablóny (bez build kroku).
+- Root `/` renderuje `automa/web/templates/index.html`.
+- Čiastočné rendery (zoznamy, statusy) vracia `/ui/partials/*`.
+- Statika: `/static` (CSS), favicon: `/favicon.ico`.
+
+Funkcie UI:
+- Registrácia a prihlásenie (cookie `automa_access_token`).
+- Obsah (Agenti, Skripty, Joby) až po prihlásení.
+- Správa profilu (zmena emailu/mena) a zmena hesla.
 
 ## Testy
 - Spustenie: `uv run pytest -q`
@@ -36,6 +43,8 @@ Automa je FastAPI backend pre riadenie, plánovanie, monitoring a audit Python s
 1) Získaj token: `POST /api/v1/auth/token` (form: username, password)
 2) Autorizácia: `Authorization: Bearer <token>`
 3) Správa: `/api/v1/agents`, `/api/v1/scripts`, `/api/v1/jobs`
+4) Registrácia: `POST /api/v1/auth/register`
+5) Profil: `GET/PATCH /api/v1/users/me`, `POST /api/v1/users/me/change_password`
 
 ## Migrácie (Alembic)
 - Upgrade: `uv run alembic upgrade head`

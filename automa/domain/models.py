@@ -9,6 +9,7 @@ class User(SQLModel, table=True):
     hashed_password: str
     is_active: bool = True
     is_admin: bool = False
+    full_name: Optional[str] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
 
@@ -43,4 +44,3 @@ class AuditLog(SQLModel, table=True):
     target_id: Optional[int] = None
     detail: Optional[str] = None
     created_at: datetime = Field(default_factory=datetime.utcnow, index=True)
-
