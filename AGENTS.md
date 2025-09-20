@@ -6,11 +6,12 @@
  - `README.md`: Short project overview and usage notes.
  - Optional as the code grows: place modules under `automa/` and tests under `tests/`.
 
- ## Build, Test, and Development Commands
- - Run app: `python main.py`
- - Lint (optional): `ruff .` — static analysis if Ruff is installed.
- - Format (optional): `black .` — auto-format if Black is installed.
- - Tests (when added): `pytest -q` — run unit tests in `tests/`.
+## Build, Test, and Development Commands
+- Run app: `python main.py`
+- Lint (optional): `ruff .` — static analysis if Ruff is installed.
+- Format (optional): `black .` — auto-format if Black is installed.
+- Tests (when added): `pytest -q` — run unit tests in `tests/`.
+ - Migrations: `alembic upgrade head`; create new: `alembic revision --autogenerate -m "msg"`.
 
  ## Coding Style & Naming Conventions
  - Indentation: 4 spaces; line length ≤ 100 chars.

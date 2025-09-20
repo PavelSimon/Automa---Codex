@@ -1,0 +1,4 @@
+Alembic migration environment for Automa.
+
+Initial baseline is empty; the application creates tables on first run.
+Use autogenerate for future schema diffs.

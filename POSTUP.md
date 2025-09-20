@@ -54,3 +54,9 @@ tests/
 ## 7) Nasadenie
 - Lokálne/LAN: Uvicorn/Gunicorn + reverse proxy (Nginx/Caddy), perzistentná DB, Docker daemon.
 - Zálohy DB a logov, rotácia logov, periodické audity.
+
+## 8) Migrácie schémy (Alembic)
+- Konfigurácia: `alembic.ini`, priečinok `alembic/` (baseline rev `0001_baseline`).
+- Prvé spustenie: tabuľky vytvorí aplikácia (SQLModel). Alembic baseline len označí stav.
+- Budúce zmeny: po úprave modelov spustiť `alembic revision --autogenerate -m "<popis>"` a `alembic upgrade head`.
+- URL DB sa berie z `AUTOMA_SQLITE_URL` alebo default `sqlite:///./automa.db`.
